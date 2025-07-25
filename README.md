@@ -1,2 +1,4 @@
 # Receipty
-Receipty est un projet personnel de gestion automatisée des dépenses à partir de tickets de caisse. L’utilisateur envoie une photo qui est ensuite analysée pour extraire les achats, catégoriser les dépenses, générer des statistiques visuelles et proposer des conseils d’épargne.  Ce projet combine : OCR, NLP, API, et dashboard de visualisation...
+**Recipty** is a personal project for automated expense tracking based on shopping receipts.
+The user sends a photo of a receipt, which is then processed to extract purchases, categorize expenses, generate visual statistics, and provide saving advice.
+The project combines OCR, NLP, API development, and a data visualization dashboard.
