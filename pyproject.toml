@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "faker>=37.11.0",
     "fastapi[standard]>=0.116.1",
     "openai>=1.97.1",
     "pre-commit>=4.2.0",
