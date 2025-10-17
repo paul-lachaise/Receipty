@@ -79,16 +79,16 @@ MERCHANTS = [
 FAKE_USER_ID = "00000000-0000-0000-0000-000000000000"
 
 
-def generate_clean_data(num_receipts=10):
+def generate_more_clean_data(num_receipts=5):
     """
-    Generate clean data for testing
+    Add generate clean data for testing
 
     Parameters
     ----------
     num_receipts : int, optional
         Number of receipts to generate
     """
-    print("Starting clean data generation...")
+    print("Starting more clean data generation...")
 
     for i in range(num_receipts):
         receipt_data = {
@@ -131,19 +131,13 @@ def generate_clean_data(num_receipts=10):
         except Exception as e:
             print(f"Error adding items for receipt ID {new_receipt_id}: {e}")
 
-    print("\nData generation complete!")
+    print("\nMore data generation complete!")
 
 
 if __name__ == "__main__":
-    print("Clearing existing tables...")
-    supabase.table("items").delete().neq(
-        "id", "00000000-0000-0000-0000-000000000000"
-    ).execute()
-    supabase.table("receipts").delete().neq(
-        "id", "00000000-0000-0000-0000-000000000000"
-    ).execute()
+    print("add new data to existing tables...")
 
-    generate_clean_data(10)
+    generate_more_clean_data(5)
 
     response = supabase.table("receipts").select("id", count="exact").execute()
     count = response.count
