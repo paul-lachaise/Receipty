@@ -81,12 +81,24 @@ FAKE_USER_ID = "00000000-0000-0000-0000-000000000000"
 
 def generate_clean_data(num_receipts=10):
     """
-    Generate clean data for testing
+    Populates the database with clean, fake receipts and their associated items.
+
+    This function serves as a utility to create a complete and structured dataset
+    for demonstration or testing purposes. It generates a specified number of
+    parent 'receipt' records with all fields populated (e.g., merchant, total_amount),
+    simulating a fully processed state. For each receipt, it also generates
+    a random number of corresponding 'item' records with coherent names and categories.
 
     Parameters
     ----------
     num_receipts : int, optional
-        Number of receipts to generate
+        The number of complete receipt records to generate. Defaults to 10.
+
+    Returns
+    -------
+    None
+        This function does not return any value. Its primary effects are
+        database mutations and printing progress to the console.
     """
     print("Starting clean data generation...")
 

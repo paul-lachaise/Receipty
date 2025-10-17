@@ -7,6 +7,8 @@ class Settings(BaseSettings):
 
     supabase_url: str = Field(min_length=20, env="SUPABASE_URL")
     supabase_api_key: str = Field(min_length=10, env="SUPABASE_API_KEY")
+    streamlit_guest_password: str = Field(..., env="STREAMLIT_GUEST_PASSWORD")
+    streamlit_dev_password: str = Field(..., env="STREAMLIT_DEV_PASSWORD")
 
     @field_validator("supabase_url")
     @classmethod
