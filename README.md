@@ -19,7 +19,7 @@
 * **Frontend & Visualization:** Streamlit, Streamlit Community Cloud
 * **Development & Tooling:** UV, Pre-commit hooks, Git & GitHub, Faker, Pytest
 
-
+![Receipty Architecture](/assets/receipty_architecture.jpg)
 
 ## Current Status
 
