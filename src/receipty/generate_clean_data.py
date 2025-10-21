@@ -2,6 +2,7 @@ import sys
 import random
 from faker import Faker
 from supabase import create_client, Client
+from decimal import Decimal
 
 
 try:
@@ -81,35 +82,44 @@ FAKE_USER_ID = "00000000-0000-0000-0000-000000000000"
 
 def generate_clean_data(num_receipts=10):
     """
-    Populates the database with clean, fake receipts and their associated items.
-
-    This function serves as a utility to create a complete and structured dataset
-    for demonstration or testing purposes. It generates a specified number of
-    parent 'receipt' records with all fields populated (e.g., merchant, total_amount),
-    simulating a fully processed state. For each receipt, it also generates
-    a random number of corresponding 'item' records with coherent names and categories.
-
-    Parameters
-    ----------
-    num_receipts : int, optional
-        The number of complete receipt records to generate. Defaults to 10.
-
-    Returns
-    -------
-    None
-        This function does not return any value. Its primary effects are
-        database mutations and printing progress to the console.
+    Populates the database with clean, fake receipts and their associated items,
+    ensuring the total amount of each receipt matches the sum of its items.
     """
     print("Starting clean data generation...")
 
     for i in range(num_receipts):
+        # --- NEW LOGIC STEP 1: Generate items in memory and calculate their sum ---
+        num_items = random.randint(2, 8)
+        items_to_insert = []
+        calculated_total = Decimal("0.0")
+
+        for _ in range(num_items):
+            item_category = random.choice(CATEGORIES)
+            item_name = random.choice(COHERENT_ITEMS_BY_CATEGORY[item_category])
+            price = Decimal(str(round(random.uniform(0.5, 50.0), 2)))
+            quantity = random.randint(1, 5)
+
+            calculated_total += price * quantity
+
+            item_data = {
+                # 'receipt_id' will be added later
+                "name": item_name,
+                "price": float(
+                    price
+                ),  # Convert Decimal to float for JSON serialization
+                "quantity": quantity,
+                "category": item_category,
+            }
+            items_to_insert.append(item_data)
+
+        # --- NEW LOGIC STEP 2: Create the receipt with the calculated total ---
         receipt_data = {
             "user_id": FAKE_USER_ID,
             "merchant": random.choice(MERCHANTS),
             "receipt_date": fake.date_between(
                 start_date="-1y", end_date="today"
             ).isoformat(),
-            "total_amount": round(random.uniform(5.0, 300.0), 2),
+            "total_amount": float(calculated_total),  # Use the calculated total
             "status": "processed",
         }
 
@@ -117,25 +127,15 @@ def generate_clean_data(num_receipts=10):
             response_receipt = supabase.table("receipts").insert(receipt_data).execute()
             new_receipt_id = response_receipt.data[0]["id"]
             print(
-                f"Created receipt for '{receipt_data['merchant']}' with ID: {new_receipt_id}"
+                f"Created receipt for '{receipt_data['merchant']}' with ID: {new_receipt_id} (Total: {calculated_total:.2f} €)"
             )
         except Exception as e:
             print(f"Error creating receipt: {e}")
             continue
 
-        num_items = random.randint(2, 8)
-        items_to_insert = []
-        for _ in range(num_items):
-            item_category = random.choice(CATEGORIES)
-            item_name = random.choice(COHERENT_ITEMS_BY_CATEGORY[item_category])
-            item_data = {
-                "receipt_id": new_receipt_id,
-                "name": item_name,
-                "price": round(random.uniform(0.5, 50.0), 2),
-                "quantity": random.randint(1, 5),
-                "category": item_category,
-            }
-            items_to_insert.append(item_data)
+        # --- NEW LOGIC STEP 3: Add the receipt_id to each item and insert them ---
+        for item in items_to_insert:
+            item["receipt_id"] = new_receipt_id
 
         try:
             supabase.table("items").insert(items_to_insert).execute()
@@ -155,7 +155,7 @@ if __name__ == "__main__":
         "id", "00000000-0000-0000-0000-000000000000"
     ).execute()
 
-    generate_clean_data(10)
+    generate_clean_data(1)
 
     response = supabase.table("receipts").select("id", count="exact").execute()
     count = response.count
