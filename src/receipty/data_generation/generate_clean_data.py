@@ -6,7 +6,7 @@ from decimal import Decimal
 
 
 try:
-    from config import settings
+    from ..config import settings
 except ImportError:
     print("Error: Could not import 'settings' from 'src.receipty.config'.")
     print("Please ensure the file exists and the path is correct.")
@@ -85,6 +85,7 @@ def generate_clean_data(num_receipts=10):
     Populates the database with clean, fake receipts and their associated items,
     ensuring the total amount of each receipt matches the sum of its items.
     """
+    print("Starting clean data generation...")
 
     for i in range(num_receipts):
         # --- NEW LOGIC STEP 1: Generate items in memory and calculate their sum ---
@@ -146,9 +147,15 @@ def generate_clean_data(num_receipts=10):
 
 
 if __name__ == "__main__":
-    print("add new data to existing tables...")
+    print("Clearing existing tables...")
+    supabase.table("items").delete().neq(
+        "id", "00000000-0000-0000-0000-000000000000"
+    ).execute()
+    supabase.table("receipts").delete().neq(
+        "id", "00000000-0000-0000-0000-000000000000"
+    ).execute()
 
-    generate_clean_data(5)
+    generate_clean_data(1)
 
     response = supabase.table("receipts").select("id", count="exact").execute()
     count = response.count

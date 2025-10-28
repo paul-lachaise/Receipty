@@ -5,7 +5,7 @@ from supabase import create_client, Client
 from decimal import Decimal, ROUND_HALF_UP
 
 try:
-    from config import settings
+    from ..config import settings
 except ImportError:
     print("Error: Could not import 'settings' from 'config.py'.")
     print("Please ensure the file exists.")
@@ -136,7 +136,23 @@ def generate_receipt_text():
 
 def simulate_ocr_insertion(num_receipts=5):
     """
-    Inserts raw OCR-like text into the 'receipts' table.
+    Inserts a specified number of raw, OCR-like text records into the 'receipts' table.
+
+    This function simulates the initial data ingestion step where raw text from an
+    OCR process is stored. For each receipt, it calls `generate_receipt_text()`
+    to create a text block and then inserts a new row into the database. It populates
+    only the essential fields ('user_id', 'extracted_text', 'status') to prepare
+    the record for subsequent processing by an LLM.
+
+    Parameters
+    ----------
+    num_receipts : int, optional
+        The number of raw receipt records to generate and insert. Defaults to 5.
+
+    Returns
+    -------
+    None
+        This function does not return any value; it prints its progress to the console.
     """
     print("Starting OCR input simulation...")
     for i in range(num_receipts):
@@ -155,14 +171,9 @@ def simulate_ocr_insertion(num_receipts=5):
 
 
 if __name__ == "__main__":
-    print("Clearing existing tables...")
-    supabase.table("items").delete().neq(
-        "id", "00000000-0000-0000-0000-000000000000"
-    ).execute()
-    supabase.table("receipts").delete().neq(
-        "id", "00000000-0000-0000-0000-000000000000"
-    ).execute()
-    simulate_ocr_insertion(10)
+    print("add new data to existing tables...")
+
+    simulate_ocr_insertion(5)
 
     response = supabase.table("receipts").select("id", count="exact").execute()
     count = response.count
