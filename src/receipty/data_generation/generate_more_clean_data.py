@@ -148,7 +148,7 @@ def generate_clean_data(num_receipts=10):
 if __name__ == "__main__":
     print("add new data to existing tables...")
 
-    generate_clean_data(5)
+    generate_clean_data(1)
 
     response = supabase.table("receipts").select("id", count="exact").execute()
     count = response.count

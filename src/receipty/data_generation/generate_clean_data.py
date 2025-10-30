@@ -155,7 +155,7 @@ if __name__ == "__main__":
         "id", "00000000-0000-0000-0000-000000000000"
     ).execute()
 
-    generate_clean_data(1)
+    generate_clean_data(5)
 
     response = supabase.table("receipts").select("id", count="exact").execute()
     count = response.count

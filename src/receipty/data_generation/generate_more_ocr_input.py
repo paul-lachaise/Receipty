@@ -174,7 +174,7 @@ def simulate_ocr_insertion(num_receipts=5):
 if __name__ == "__main__":
     print("add new data to existing tables...")
 
-    simulate_ocr_insertion(5)
+    simulate_ocr_insertion(1)
 
     response = supabase.table("receipts").select("id", count="exact").execute()
     count = response.count
