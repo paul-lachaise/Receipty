@@ -6,7 +6,7 @@ from decimal import Decimal
 
 
 try:
-    from ..config import settings
+    from receipty.config import settings
 except ImportError:
     print("Error: Could not import 'settings' from 'src.receipty.config'.")
     print("Please ensure the file exists and the path is correct.")

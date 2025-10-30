@@ -4,8 +4,9 @@ from faker import Faker
 from supabase import create_client, Client
 from decimal import Decimal, ROUND_HALF_UP
 
+
 try:
-    from ..config import settings
+    from receipty.config import settings
 except ImportError:
     print("Error: Could not import 'settings' from 'config.py'.")
     print("Please ensure the file exists.")
