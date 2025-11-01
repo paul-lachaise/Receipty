@@ -459,6 +459,30 @@ def main():
             st.subheader("Raw Data Inspector")
             st.dataframe(df_full)
 
+            st.divider()
+            st.subheader("Failed Receipts Queue")
+
+            df_failed = df_full[df_full["status"] == "failed"]
+
+            if df_failed.empty:
+                st.success("No failed receipts found. All clear!")
+            else:
+                st.warning(f"Found {len(df_failed)} failed receipts.")
+                st.dataframe(df_failed[["receipt_date", "merchant", "status"]])
+
+                if st.button("Retry All Failed Receipts", use_container_width=True):
+                    try:
+                        supabase.table("receipts").update({"status": "pending"}).eq(
+                            "status", "failed"
+                        ).execute()
+
+                        st.success("All failed receipts have been reset to 'pending'.")
+
+                        st.cache_data.clear()
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"An error occurred: {e}")
+
 
 # RUN THE APP
 if authenticate():
