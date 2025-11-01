@@ -466,11 +466,13 @@ def main():
 
             df_failed = df_full[df_full["status"] == "failed"]
 
-            if df_failed.empty:
+            df_failed_unique = df_failed.drop_duplicates(subset=["receipt_id"])
+
+            if df_failed_unique.empty:
                 st.success("No failed receipts found. All clear!")
             else:
-                st.warning(f"Found {len(df_failed)} failed receipts.")
-                st.dataframe(df_failed[["receipt_date", "merchant", "status"]])
+                st.warning(f"Found {len(df_failed_unique)} failed receipts.")
+                st.dataframe(df_failed_unique[["receipt_date", "merchant", "status"]])
 
                 if st.button("Retry All Failed Receipts", use_container_width=True):
                     try:
