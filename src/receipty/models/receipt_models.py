@@ -38,30 +38,27 @@ class ItemData(BaseModel):
     quantity: PositiveInt = Field(
         ..., description="The quantity of the item purchased (must be 1 or more)."
     )
-    price: Decimal = Field(
+    line_price: Decimal = Field(
         ...,
         ge=0,
-        description="The price for a single unit of the item. Must be non-negative.",
+        description="The TOTAL price for this line item (quantity * unit price). Must be non-negative.",
     )
     category: Categories = Field(
         default=Categories.AUTRE,
         description="The expense category assigned to this item.",
     )
 
-    @field_validator("price", mode="before")
-    @classmethod
+    @field_validator("line_price", mode="before")
     def price_must_be_decimal(cls, value):
-        # Ensure price is handled as Decimal for financial accuracy
         try:
-            # Handle potential currency symbols or spaces returned by LLM
             if isinstance(value, str):
                 value = value.replace("€", "").replace("EUR", "").strip()
             dec_value = Decimal(value)
             if dec_value < 0:
-                raise ValueError("Unit price must be non-negative")
+                raise ValueError("Line item price must be non-negative")
             return dec_value
         except Exception:
-            raise ValueError("Unit price must be a valid number")
+            raise ValueError("Line price must be a valid number")
 
 
 # Model representing the structured data expected from the LLM
@@ -116,10 +113,10 @@ class StructuredReceiptData(BaseModel):
     @model_validator(mode="after")
     def check_total_matches_items_sum(self) -> "StructuredReceiptData":
         """
-        Validates that the sum of (price * quantity) for all items
+        Validates that the sum of all item line prices
         approximately matches the total_amount.
         """
-        calculated_sum = sum(item.price * item.quantity for item in self.items)
+        calculated_sum = sum(item.line_price for item in self.items)
         # Allow a small tolerance for potential rounding differences
         tolerance = Decimal("0.02")
 
@@ -174,3 +171,10 @@ class ItemDB(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# Modèle de réponse générique API
+class MessageResponse(BaseModel):
+    """Represents a response message."""
+
+    message: str
