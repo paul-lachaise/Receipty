@@ -86,7 +86,9 @@ def load_data():
     Loads data from Supabase, merges receipts and items, and prepares it for analysis.
     """
     receipts_response = (
-        supabase.table("receipts").select("id, receipt_date, merchant").execute()
+        supabase.table("receipts")
+        .select("id, receipt_date, merchant, status")
+        .execute()
     )
     items_response = (
         supabase.table("items")
