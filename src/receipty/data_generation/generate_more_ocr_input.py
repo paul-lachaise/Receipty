@@ -15,7 +15,6 @@ except ImportError:
 supabase: Client = create_client(settings.supabase_url, settings.supabase_api_key)
 fake = Faker("fr_FR")
 
-# ADVANCED SIMULATION DATA
 COHERENT_ITEMS_BY_CATEGORY = {
     "Alimentation": [
         "Baguette Tradition",
@@ -23,25 +22,97 @@ COHERENT_ITEMS_BY_CATEGORY = {
         "Camembert Président",
         "Jambon Blanc",
         "Pâtes Barilla",
+        "Tomates Grappe",
+        "Eau Evian 1.5L",
+        "Croissant",
+        "Pain au Chocolat",
+        "Filet de Poulet",
+        "Saumon Fumé",
     ],
-    "Loisirs": ["Livre 'Dune'", "Jeu de société", "Place de cinéma", "Jeu Vidéo PS5"],
-    "Transport": ["Plein Essence SP98", "Billet de train SNCF", "Ticket de Métro"],
-    "Maison": ["Liquide Vaisselle", "Éponges Spontex", "Lessive Ariel"],
-    "Santé": ["Boîte de Paracétamol", "Pansements", "Dentifrice"],
+    "Loisirs": [
+        "Livre 'Dune'",
+        "Jeu de société",
+        "Place de cinéma",
+        "Jeu Vidéo PS5",
+        "Roman Policier",
+        "Manga 'One Piece'",
+        "Jeu de Cartes",
+    ],
+    "Transport": [
+        "Plein Essence SP98",
+        "Billet de train SNCF",
+        "Ticket de Métro",
+        "Recharge Navigo",
+        "Gazole",
+        "Ticket RER",
+    ],
+    "Maison": [
+        "Liquide Vaisselle",
+        "Éponges Spontex",
+        "Lessive Ariel",
+        "Sacs Poubelle",
+        "Ampoule LED",
+        "Produit Nettoyant",
+    ],
+    "Santé": [
+        "Boîte de Paracétamol",
+        "Pansements",
+        "Dentifrice",
+        "Bain de bouche",
+        "Sirop Toux",
+        "Crème Solaire",
+    ],
+    "Technologie": [
+        "Câble USB-C",
+        "Clé USB 64Go",
+        "Souris Optique",
+        "Écouteurs Sony",
+        "Chargeur iPhone",
+    ],
+    "Vêtements": [
+        "T-shirt en coton",
+        "Chaussettes",
+        "Jean Levis 501",
+        "Pull en laine",
+        "Baskets Adidas",
+        "Robe d'été",
+    ],
+    "Factures": [
+        "Facture EDF",
+        "Facture Internet Free",
+        "Loyer",
+        "Facture Véolia (Eau)",
+    ],
 }
 
 TEMPLATE_CONFIG = {
     "supermarket": {
         "merchants": ["Carrefour", "Leclerc", "Auchan"],
-        "categories": ["Alimentation", "Maison", "Santé"],
+        "categories": ["Alimentation", "Maison", "Santé", "Vêtements"],
     },
     "gas_station": {
         "merchants": ["TotalEnergies", "Esso"],
         "categories": ["Transport"],
     },
-    "generic_store": {
-        "merchants": ["Fnac", "Pharmacie", "Boulangerie", "SNCF"],
-        "categories": ["Loisirs", "Santé", "Alimentation", "Transport"],
+    "book_store": {
+        "merchants": ["Fnac"],
+        "categories": ["Loisirs", "Technologie"],
+    },
+    "pharmacy": {
+        "merchants": ["Pharmacie"],
+        "categories": ["Santé"],
+    },
+    "bakery": {
+        "merchants": ["Boulangerie"],
+        "categories": ["Alimentation"],
+    },
+    "transport_service": {
+        "merchants": ["SNCF"],
+        "categories": ["Transport"],
+    },
+    "online_store": {
+        "merchants": ["Amazon.fr"],
+        "categories": ["Loisirs", "Maison", "Vêtements", "Technologie"],
     },
 }
 
@@ -74,7 +145,7 @@ def _generate_receipt_items(allowed_categories):
         category = random.choice(allowed_categories)
         item_name = random.choice(COHERENT_ITEMS_BY_CATEGORY[category])
         quantity = random.randint(1, 3)
-        price = Decimal(str(round(random.uniform(1.5, 45.0), 2)))
+        price = Decimal(str(round(random.uniform(1.5, 30.0), 2)))
         line_total = price * quantity
         total_amount += line_total
 
